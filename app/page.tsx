@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight, Gauge, Tags, FileText, Star } from 'lucide-react'
+import { ArrowRight, Gauge, Tags, FileText, Star, Globe } from 'lucide-react'
 import { SiteNav } from '@/components/site-nav'
 import { SiteFooter } from '@/components/site-footer'
 import { PricingTable } from '@/components/pricing-table'
@@ -22,7 +22,7 @@ const FEATURES = [
     desc: 'Gere uma carta personalizada para a vaga, no tom certo para o recrutador brasileiro.',
   },
   {
-    icon: Linkedin,
+    icon: Globe,
     title: 'Otimização de LinkedIn',
     desc: 'Receba dicas para alinhar seu perfil do LinkedIn com a vaga e atrair recrutadores.',
   },
