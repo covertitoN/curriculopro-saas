@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight, Gauge, Tags, FileText, Linkedin, Star } from 'lucide-react'
+import { ArrowRight, Gauge, Tags, FileText, Star } from 'lucide-react'
 import { SiteNav } from '@/components/site-nav'
 import { SiteFooter } from '@/components/site-footer'
 import { PricingTable } from '@/components/pricing-table'
