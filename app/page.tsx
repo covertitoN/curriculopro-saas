@@ -83,7 +83,7 @@ export default function HomePage() {
                   </Button>
                 </div>
                 <p className="mt-4 text-sm text-muted-foreground">
-                  grátis para começar · 2 análises por mês · Sem cartão
+                  grátis para começar · 3 análises por mês · Sem cartão
                 </p>
               </div>
               <ScorePreview />
