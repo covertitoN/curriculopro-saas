@@ -1,173 +1,59 @@
-import { generateText, Output } from 'ai'
-import { z } from 'zod'
-import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+﻿import { NextRequest, NextResponse } from "next/server"
+import Anthropic from "@anthropic-ai/sdk"
+import { createClient } from "@supabase/supabase-js"
+import { rateLimit, getIdentifier, RATE_LIMITS } from "@/lib/rate-limit"
 
-export const maxDuration = 60
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
+const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
 
-const analysisSchema = z.object({
-  ats_score: z
-    .number()
-    .min(0)
-    .max(100)
-    .describe('Nota de 0 a 100 de compatibilidade com sistemas ATS'),
-  score_label: z
-    .string()
-    .describe('Rótulo curto, ex: "Excelente", "Bom", "Precisa melhorar"'),
-  score_desc: z
-    .string()
-    .describe('Uma frase explicando o score em português do Brasil'),
-  keywords_found: z
-    .array(z.string())
-    .describe('Palavras-chave da vaga já presentes no currículo'),
-  keywords_missing: z
-    .array(z.string())
-    .describe('Palavras-chave importantes da vaga ausentes no currículo'),
-  curriculo_otimizado: z
-    .string()
-    .describe(
-      'Versão otimizada do currículo em texto, pronta para copiar, em português do Brasil',
-    ),
-  carta_apresentacao: z
-    .string()
-    .describe('Carta de apresentação personalizada para a vaga, em português do Brasil'),
-  dicas: z
-    .string()
-    .describe(
-      'Dicas práticas do recrutador em formato de tópicos com markdown, em português do Brasil',
-    ),
-})
-
-const SYSTEM_PROMPT = `Você é um especialista sênior em sistemas ATS (Applicant Tracking Systems) e recrutamento para o mercado de trabalho BRASILEIRO.
-
-Sua função é analisar um currículo em comparação com uma descrição de vaga e produzir uma otimização completa.
-
-Diretrizes:
-- Escreva TUDO em português do Brasil, com tom profissional e direto.
-- Considere as particularidades do mercado brasileiro (formato de currículo, CLT/PJ, idiomas, certificações comuns no Brasil).
-- O ats_score deve refletir objetivamente a compatibilidade entre o currículo e a vaga (0-100).
-- keywords_found: termos e competências da vaga que JÁ aparecem no currículo.
-- keywords_missing: termos e competências importantes da vaga que estão AUSENTES no currículo.
-- curriculo_otimizado: reescreva o currículo incorporando naturalmente as palavras-chave que faltam, com verbos de ação e resultados quantificados, mantendo a veracidade das informações originais. Não invente experiências falsas.
-- carta_apresentacao: carta de apresentação curta e personalizada para esta vaga específica.
-- dicas: lista de dicas práticas do ponto de vista do recrutador, em markdown com tópicos.
-- Seja específico e acionável, nunca genérico.`
-
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Você precisa estar logado.' },
-        { status: 401 },
-      )
-    }
-
     const body = await req.json()
-    const { resume_input, job_description, job_title, company } = body as {
-      resume_input?: string
-      job_description?: string
-      job_title?: string
-      company?: string
+    const { curriculoText, vagaText, userId, tipo = "analise" } = body
+    if (!curriculoText || !vagaText) return NextResponse.json({ error: "Curriculo e vaga sao obrigatorios." }, { status: 400 })
+    if (curriculoText.length > 8000) return NextResponse.json({ error: "Curriculo muito longo. Maximo 8.000 caracteres." }, { status: 400 })
+    if (vagaText.length > 4000) return NextResponse.json({ error: "Vaga muito longa. Maximo 4.000 caracteres." }, { status: 400 })
+
+    const identifier = userId || getIdentifier(req)
+    const rl = rateLimit(identifier, userId ? RATE_LIMITS.free : RATE_LIMITS.anonymous)
+    if (!rl.success) {
+      const resetIn = Math.ceil((rl.resetAt - Date.now()) / 60000)
+      return NextResponse.json({ error: `Limite atingido. Tente em ${resetIn} minutos ou faca upgrade para Pro.`, upgradeUrl: "/pricing" }, { status: 429 })
     }
 
-    if (!resume_input || !resume_input.trim()) {
-      return NextResponse.json(
-        { error: 'Adicione o conteúdo do seu currículo.' },
-        { status: 400 },
-      )
-    }
-    if (!job_description || !job_description.trim()) {
-      return NextResponse.json(
-        { error: 'Cole a descrição da vaga.' },
-        { status: 400 },
-      )
-    }
+    const isCarta = tipo === "carta"
+    const system = isCarta
+      ? "Voce e especialista em cartas de apresentacao profissionais para o mercado brasileiro. Gere uma carta persuasiva de 250-350 palavras, natural, com abertura impactante (nao 'Venho por meio desta'), destacando os 3 pontos mais relevantes do curriculo para a vaga, usando as palavras-chave da vaga naturalmente, terminando com CTA para entrevista. Responda APENAS com a carta."
+      : "Voce e especialista em ATS e recrutamento no mercado brasileiro. Analise o curriculo vs a vaga e retorne APENAS JSON valido sem markdown."
+    const user = isCarta
+      ? `CURRICULO:\n${curriculoText}\n\nVAGA:\n${vagaText}\n\nGere a carta:`
+      : `CURRICULO:\n${curriculoText}\n\nVAGA:\n${vagaText}\n\nRetorne JSON:\n{"score":number,"resumo":"string","pontos_fortes":["string"],"keywords_faltando":[{"palavra":"string","importancia":"alta|media|baixa","sugestao":"string"}],"melhorias_prioritarias":[{"titulo":"string","descricao":"string","impacto":"alto|medio|baixo"}],"veredicto":"aprovado|atencao|reprovado"}`
 
-    // Consume a credit atomically (respects RLS via auth.uid()).
-    const { data: creditData, error: creditError } = await supabase.rpc(
-      'check_and_consume_credit',
-    )
-
-    if (creditError) {
-      return NextResponse.json(
-        { error: 'Não foi possível verificar seus créditos.' },
-        { status: 500 },
-      )
-    }
-
-    const credit = creditData as {
-      allowed: boolean
-      reason?: string
-      credits_used?: number
-      credits_limit?: number
-    }
-
-    if (!credit?.allowed) {
-      return NextResponse.json(
-        {
-          error:
-            credit?.reason === 'limit_reached'
-              ? 'Você usou todas as suas análises gratuitas deste mês. Faça upgrade para o plano Pro.'
-              : 'Não foi possível liberar a análise.',
-          reason: credit?.reason,
-          credits_used: credit?.credits_used,
-          credits_limit: credit?.credits_limit,
-        },
-        { status: 402 },
-      )
-    }
-
-    const userPrompt = `## DESCRIÇÃO DA VAGA
-${job_title ? `Cargo: ${job_title}\n` : ''}${company ? `Empresa: ${company}\n` : ''}
-${job_description}
-
-## CURRÍCULO ATUAL DO CANDIDATO
-${resume_input}`
-
-    const { experimental_output: result } = await generateText({
-      model: 'anthropic/claude-sonnet-4.5',
-      system: SYSTEM_PROMPT,
-      prompt: userPrompt,
-      experimental_output: Output.object({ schema: analysisSchema }),
+    const response = await anthropic.messages.create({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: isCarta ? 600 : 1200,
+      messages: [{ role: "user", content: user }],
+      system,
     })
 
-    // Persist the analysis (RLS ensures user_id matches auth.uid()).
-    const { data: saved } = await supabase
-      .from('analyses')
-      .insert({
-        user_id: user.id,
-        job_title: job_title || null,
-        company: company || null,
-        job_description,
-        resume_input,
-        ats_score: result.ats_score,
-        score_label: result.score_label,
-        score_desc: result.score_desc,
-        keywords_found: result.keywords_found,
-        keywords_missing: result.keywords_missing,
-        curriculo_otimizado: result.curriculo_otimizado,
-        carta_apresentacao: result.carta_apresentacao,
-        dicas: result.dicas,
-      })
-      .select()
-      .single()
+    const text = response.content[0].type === "text" ? response.content[0].text.trim() : ""
+    let result: unknown
+    if (isCarta) {
+      result = { carta: text }
+    } else {
+      const match = text.match(/\{[\s\S]*\}/)
+      if (!match) throw new Error("JSON invalido")
+      result = JSON.parse(match[0])
+    }
 
-    return NextResponse.json({
-      ...result,
-      id: saved?.id ?? null,
-      credits_used: credit.credits_used,
-      credits_limit: credit.credits_limit,
-    })
-  } catch (err) {
-    console.error('[v0] analyze error:', err)
-    return NextResponse.json(
-      { error: 'Erro ao analisar o currículo. Tente novamente.' },
-      { status: 500 },
-    )
+    if (userId && !isCarta) {
+      const d = result as { score?: number }
+      supabase.from("analyses").insert({ user_id: userId, score: d.score || 0, result, created_at: new Date().toISOString() }).then(() => {}).catch(() => {})
+    }
+
+    return NextResponse.json({ success: true, data: result, remaining: rl.remaining })
+  } catch (error: unknown) {
+    console.error(error)
+    return NextResponse.json({ error: "Erro ao processar. Tente novamente." }, { status: 500 })
   }
 }

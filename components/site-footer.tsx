@@ -1,33 +1,20 @@
-import Link from 'next/link'
-
+﻿import Link from "next/link"
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border/60 bg-background">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-12 sm:px-6 md:flex-row md:items-center md:justify-between">
-        <div>
-          <p className="font-serif text-xl">CurrículoPro</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Seu currículo, pronto para vencer o robô.
-          </p>
+    <footer className="border-t border-gray-100 mt-auto">
+      <div className="max-w-6xl mx-auto px-6 py-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+          <div className="col-span-2 md:col-span-1">
+            <Link href="/" className="font-semibold text-lg">CurriculoPro</Link>
+            <p className="text-sm text-gray-500 mt-2">Seu curriculo otimizado para passar pelo robo ATS.</p>
+          </div>
+          <div><h3 className="text-sm font-medium mb-3">Produto</h3><ul className="space-y-2"><li><Link href="/app" className="text-sm text-gray-500 hover:text-gray-900">Analisar curriculo</Link></li><li><Link href="/pricing" className="text-sm text-gray-500 hover:text-gray-900">Planos e precos</Link></li></ul></div>
+          <div><h3 className="text-sm font-medium mb-3">Conteudo</h3><ul className="space-y-2"><li><Link href="/blog" className="text-sm text-gray-500 hover:text-gray-900">Blog</Link></li><li><Link href="/blog/como-otimizar-curriculo-ats" className="text-sm text-gray-500 hover:text-gray-900">O que e ATS?</Link></li></ul></div>
+          <div><h3 className="text-sm font-medium mb-3">Legal</h3><ul className="space-y-2"><li><Link href="/privacidade" className="text-sm text-gray-500 hover:text-gray-900">Privacidade</Link></li><li><Link href="/termos" className="text-sm text-gray-500 hover:text-gray-900">Termos</Link></li><li><a href="mailto:suporte@curriculopro.com.br" className="text-sm text-gray-500 hover:text-gray-900">Suporte</a></li></ul></div>
         </div>
-        <nav className="flex flex-wrap gap-x-8 gap-y-3 text-sm text-muted-foreground">
-          <Link href="/#recursos" className="hover:text-foreground">
-            Recursos
-          </Link>
-          <Link href="/pricing" className="hover:text-foreground">
-            Preços
-          </Link>
-          <Link href="/app" className="hover:text-foreground">
-            Otimizar agora
-          </Link>
-          <Link href="/auth/login" className="hover:text-foreground">
-            Entrar
-          </Link>
-        </nav>
-      </div>
-      <div className="border-t border-border/60">
-        <div className="mx-auto max-w-6xl px-4 py-4 text-xs text-muted-foreground sm:px-6">
-          © {new Date().getFullYear()} CurrículoPro. Feito para o mercado brasileiro.
+        <div className="border-t border-gray-100 pt-6 flex justify-between items-center">
+          <p className="text-xs text-gray-400">© 2026 CurriculoPro. Todos os direitos reservados.</p>
+          <p className="text-xs text-gray-400">Feito no Brasil 🇧🇷</p>
         </div>
       </div>
     </footer>

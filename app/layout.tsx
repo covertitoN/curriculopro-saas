@@ -1,4 +1,4 @@
-import { Analytics } from '@vercel/analytics/next'
+﻿import { Analytics } from '@vercel/analytics/next'
 import type { Metadata } from 'next'
 import { DM_Sans, Instrument_Serif } from 'next/font/google'
 import './globals.css'
@@ -17,12 +17,13 @@ const instrumentSerif = Instrument_Serif({
 })
 
 export const metadata: Metadata = {
-  title: 'CurrículoPro — Otimize seu currículo para o robô ATS',
+  title: 'CurrÃ­culoPro â€” Otimize seu currÃ­culo para o robÃ´ ATS',
   description:
-    'Otimizador de currículos com IA para o mercado brasileiro. Score ATS, palavras-chave, carta de apresentação e otimização de LinkedIn.',
+    'Otimizador de currÃ­culos com IA para o mercado brasileiro. Score ATS, palavras-chave, carta de apresentaÃ§Ã£o e otimizaÃ§Ã£o de LinkedIn.',
   generator: 'v0.app',
 }
 
+import { SiteFooter } from "@/components/site-footer"
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -36,7 +37,7 @@ export default function RootLayout({
       <body className="font-sans antialiased">
         <Suspense fallback={null}>{children}</Suspense>
         {process.env.NODE_ENV === 'production' && <Analytics />}
-      </body>
+      <SiteFooter /></body>
     </html>
   )
 }
