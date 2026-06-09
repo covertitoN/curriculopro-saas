@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { ArrowRight, Gauge, Tags, FileText, Star, Globe } from 'lucide-react'
 import { SiteNav } from '@/components/site-nav'
 import { SiteFooter } from '@/components/site-footer'
@@ -9,21 +9,21 @@ const FEATURES = [
   {
     icon: Gauge,
     title: 'Score ATS',
-    desc: 'Veja em segundos a nota de 0 a 100 do seu currículo nos sistemas de triagem automática.',
+    desc: 'Veja em segundos a nota de 0 a 100 do seu currículo nos sistemas de triagem automÃ¡tica.',
   },
   {
     icon: Tags,
     title: 'Otimizador de palavras-chave',
-    desc: 'Identifique termos que faltam na sua vaga e que o robô procura para aprovar candidatos.',
+    desc: 'Identifique termos que faltam na sua vaga e que o robÃ´ procura para aprovar candidatos.',
   },
   {
     icon: FileText,
-    title: 'Carta de apresentação',
+    title: 'Carta de apresentaÃ§Ã£o',
     desc: 'Gere uma carta personalizada para a vaga, no tom certo para o recrutador brasileiro.',
   },
   {
     icon: Globe,
-    title: 'Otimização de LinkedIn',
+    title: 'otimização de LinkedIn',
     desc: 'Receba dicas para alinhar seu perfil do LinkedIn com a vaga e atrair recrutadores.',
   },
 ]
@@ -43,7 +43,7 @@ const PROOF = [
   },
   {
     quote:
-      'A carta de apresentação gerada economizou horas do meu tempo e ficou melhor do que eu escreveria.',
+      'A carta de apresentaÃ§Ã£o gerada economizou horas do meu tempo e ficou melhor do que eu escreveria.',
     name: 'Juliana Costa',
     role: 'Gerente de Projetos',
   },
@@ -61,13 +61,13 @@ export default function HomePage() {
               <div>
                 <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs text-muted-foreground">
                   <span className="size-1.5 rounded-full bg-primary" />
-                  Otimização com IA para o mercado brasileiro
+                  otimização com IA para o mercado brasileiro
                 </span>
                 <h1 className="mt-6 text-balance font-serif text-5xl leading-[1.05] md:text-6xl">
-                  Seu currículo, pronto para vencer o robô.
+                  Seu currículo, pronto para vencer o robÃ´.
                 </h1>
                 <p className="mt-6 max-w-md text-pretty text-lg leading-relaxed text-muted-foreground">
-                  76% dos currículos são descartados por sistemas ATS antes de
+                  76% dos currículos sÃ£o descartados por sistemas ATS antes de
                   chegarem a um humano. O CurrículoPro analisa, pontua e otimiza
                   o seu para passar na triagem.
                 </p>
@@ -83,7 +83,7 @@ export default function HomePage() {
                   </Button>
                 </div>
                 <p className="mt-4 text-sm text-muted-foreground">
-                  Grátis para começar · 2 análises por mês · Sem cartão
+                  grátis para comeÃ§ar Â· 2 análises por mÃªs Â· Sem cartÃ£o
                 </p>
               </div>
               <ScorePreview />
@@ -96,10 +96,10 @@ export default function HomePage() {
           <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
             <div className="max-w-2xl">
               <h2 className="text-balance font-serif text-4xl leading-tight">
-                Tudo o que você precisa para ser chamado
+                Tudo o que vocÃª precisa para ser chamado
               </h2>
               <p className="mt-4 text-pretty text-lg leading-relaxed text-muted-foreground">
-                Quatro ferramentas em uma só plataforma, pensadas para o jeito
+                Quatro ferramentas em uma sÃ³ plataforma, pensadas para o jeito
                 brasileiro de recrutar.
               </p>
             </div>
@@ -137,7 +137,7 @@ export default function HomePage() {
                 Mais de 12.000 currículos otimizados
               </h2>
               <p className="mt-3 text-muted-foreground">
-                Profissionais que pararam de ser ignorados pelos robôs.
+                Profissionais que pararam de ser ignorados pelos robÃ´s.
               </p>
             </div>
             <div className="mt-12 grid gap-6 md:grid-cols-3">
@@ -147,7 +147,7 @@ export default function HomePage() {
                   className="flex flex-col rounded-2xl border border-border bg-card p-6"
                 >
                   <blockquote className="flex-1 text-pretty leading-relaxed text-card-foreground">
-                    {`“${p.quote}”`}
+                    {`â€œ${p.quote}â€`}
                   </blockquote>
                   <figcaption className="mt-6">
                     <p className="font-medium text-card-foreground">{p.name}</p>
@@ -164,7 +164,7 @@ export default function HomePage() {
           <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
             <div className="mx-auto max-w-2xl text-center">
               <h2 className="text-balance font-serif text-4xl leading-tight">
-                Comece grátis. Faça upgrade quando precisar.
+                Comece grátis. FaÃ§a upgrade quando precisar.
               </h2>
               <p className="mt-4 text-pretty text-lg leading-relaxed text-muted-foreground">
                 Sem pegadinhas. Cancele a qualquer momento.
@@ -180,11 +180,11 @@ export default function HomePage() {
         <section className="border-t border-border/60">
           <div className="mx-auto max-w-4xl px-4 py-24 text-center sm:px-6">
             <h2 className="text-balance font-serif text-4xl leading-tight md:text-5xl">
-              Pare de ser descartado pelo robô.
+              Pare de ser descartado pelo robÃ´.
             </h2>
             <p className="mx-auto mt-4 max-w-lg text-pretty text-lg leading-relaxed text-muted-foreground">
-              Faça sua primeira análise gratuita agora e veja exatamente o que
-              está travando o seu currículo.
+              FaÃ§a sua primeira anÃ¡lise gratuita agora e veja exatamente o que
+              estÃ¡ travando o seu currículo.
             </p>
             <Button asChild size="lg" className="mt-8">
               <Link href="/app">
@@ -244,7 +244,7 @@ function ScorePreview() {
         Excelente compatibilidade
       </p>
       <div className="mt-6 flex flex-wrap gap-2">
-        {['Liderança', 'SQL', 'Gestão ágil', 'Power BI'].map((k) => (
+        {['LideranÃ§a', 'SQL', 'GestÃ£o Ã¡gil', 'Power BI'].map((k) => (
           <span
             key={k}
             className="rounded-full bg-accent px-3 py-1 text-xs text-accent-foreground"
@@ -252,15 +252,16 @@ function ScorePreview() {
             {k}
           </span>
         ))}
-        {['Inglês fluente', 'OKRs'].map((k) => (
+        {['InglÃªs fluente', 'OKRs'].map((k) => (
           <span
             key={k}
             className="rounded-full border border-warning/40 bg-warning/10 px-3 py-1 text-xs text-warning-foreground"
           >
-            {`${k} · falta`}
+            {`${k} Â· falta`}
           </span>
         ))}
       </div>
     </div>
   )
 }
+

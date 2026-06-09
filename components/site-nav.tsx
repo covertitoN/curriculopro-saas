@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { UserMenu } from '@/components/user-menu'
@@ -28,6 +28,13 @@ export async function SiteNav() {
           >
             Preços
           </Link>
+          <Link
+            href="/blog"
+            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Blog
+          </Link>
+
           {user && (
             <Link
               href="/dashboard"

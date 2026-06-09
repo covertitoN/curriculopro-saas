@@ -17,9 +17,15 @@ const instrumentSerif = Instrument_Serif({
 })
 
 export const metadata: Metadata = {
-  title: 'CurrÃ­culoPro â€” Otimize seu currÃ­culo para o robÃ´ ATS',
+  title: 'CurrículoPro â€” Otimize seu currÃ­culo para o robÃ´ ATS',
   description:
-    'Otimizador de currÃ­culos com IA para o mercado brasileiro. Score ATS, palavras-chave, carta de apresentaÃ§Ã£o e otimizaÃ§Ã£o de LinkedIn.',
+    'Otimizador de currÃ­culos com IA para o mercado brasileiro. Score ATS, palavras-chave, carta de apresentaÃ§Ã£o e otimização de LinkedIn.',
+  openGraph: {
+    title: 'CurrículoPro – Otimize seu currículo para o robô ATS',
+    description: 'Otimizador de currículos com IA para o mercado brasileiro. Score ATS, palavras-chave e carta de apresentação.',
+    type: 'website',
+    url: process.env.NEXT_PUBLIC_APP_URL,
+  },
   generator: 'v0.app',
 }
 
@@ -37,7 +43,7 @@ export default function RootLayout({
       <body className="font-sans antialiased">
         <Suspense fallback={null}>{children}</Suspense>
         {process.env.NODE_ENV === 'production' && <Analytics />}
-      <SiteFooter /></body>
+      </body>
     </html>
   )
 }
